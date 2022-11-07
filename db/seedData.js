@@ -1,5 +1,9 @@
 // require in the database adapter functions as you write them (createUser, createActivity...)
-const {client, } = require('./seed');
+const {
+  client, createUser, createActivity, createInitialUsers, createInitialActivities, 
+  createInitialRoutines, createInitialRoutineActivities
+} = require('./seed');
+
 const client = require("./client")
 
 async function dropTables() {
@@ -21,14 +25,60 @@ async function createTables() {
 
     await client.query(`
     CREATE TABLE users (
-
+      id SERIAL PRIMARY KEY,
+      username VARCHAR(255) UNIQUE NOT NULL,
+      password VARCHAR(255) NOT NULL
     ); 
     `)
+      console.log("Finished building tables...")
 
   } catch (error) {
     throw error;
   }
 }
+
+async function activities() {
+  try {
+    console.log("Starting to build activities tables...")
+    await client.query(`
+      CREATE TABLE activities (
+        id SERIAL PRIMARY KEY
+        name VARCHAR(255) UNIQUE KEY
+        description TEXT NOT NULL
+      );
+    `)
+    console.log("Finished building activities tables...")
+
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function routines() {
+  try {
+    console.log("Starting to build routine tables...")
+    await client.query(`
+      CRREATE TABLE routines (
+        id SERIAL PRIMARY KEY
+        "creatorId" INTEGER REFERENCES users(id)
+        "IsPublic" BOOLEAN 	DEFAULT false
+        name VARCHAR(255) UNIQUE NOT NULL
+        goal TEXT NOT NULL
+      );
+      `)
+
+  } catch(error) {
+    throw error;
+  }
+ }
+
+
+
+
+
+
+
+
 
 /* 
 
@@ -203,6 +253,11 @@ async function rebuildDB() {
     await createInitialActivities()
     await createInitialRoutines()
     await createInitialRoutineActivities()
+
+    await activities()
+    await routines()
+
+
   } catch (error) {
     console.log("Error during rebuildDB")
     throw error
