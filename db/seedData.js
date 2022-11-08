@@ -1,5 +1,5 @@
 // require in the database adapter functions as you write them (createUser, createActivity...)
-const {client, } = require('./seed');
+const {pool, createUser, createActivity, createRoutine, getUserById, getActivityById, getRoutineActivityById, getUserByUsername, getActivityByName} = require('./index');
 const client = require("./client")
 
 async function dropTables() {
@@ -21,13 +21,43 @@ async function createTables() {
 
     await client.query(`
     CREATE TABLE users (
-
+      id SERIAL PRIMARY KEY, 
+            username varchar(255) UNIQUE NOT NULL, 
+            password varchar(255) NOT NULL,
+            name varchar(255) NOT NULL
     ); 
-    `)
+    `);
 
-  } catch (error) {
+    await client.query(`
+    CREATE TABLE posts (
+        id SERIAL PRIMARY KEY,
+        "authorId" INTEGER REFERENCES users(id) NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        content TEXT NOT NULL,
+        active BOOLEAN DEFAULT TRUE
+    );
+    `);
+
+    await client.query(`
+        CREATE TABLE tags (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(255) UNIQUE NOT NULL
+        );
+    `);
+
+    await client.query(`
+        CREATE TABLE post_tags (
+            "postId" INTEGER REFERENCES posts(id), 
+            "tagId" INTEGER REFERENCES tags(id),
+            UNIQUE ("postId", "tagId")
+        );
+    `);
+
+    console.log("Finished building tables!")
+}catch (error) {
+    console.log("Error building tables!")
     throw error;
-  }
+}
 }
 
 /* 
