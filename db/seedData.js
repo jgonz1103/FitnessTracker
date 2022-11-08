@@ -1,13 +1,10 @@
+/* eslint-disable no-useless-catch */
 // require in the database adapter functions as you write them (createUser, createActivity...)
-<<<<<<< HEAD
-const { createUser, createActivity, createRoutine, getUserById, getActivityById, getRoutineActivityById, getUserByUsername, getActivityByName} = require('./index');
-=======
 const {
-  client, createUser, createActivity, createInitialUsers, createInitialActivities, 
-  createInitialRoutines, createInitialRoutineActivities
+  createUser, createActivity, createRoutine, getAllActivities, 
+  addActivityToRoutine, getRoutinesWithoutActivities
 } = require('./seed');
 
->>>>>>> 64d1e7e87ecad4e90b9b6fa9aff429aa8f0f917f
 const client = require("./client")
 
 async function dropTables() {
@@ -29,14 +26,6 @@ async function createTables() {
 
     await client.query(`
     CREATE TABLE users (
-<<<<<<< HEAD
-      id SERIAL PRIMARY KEY, 
-            username varchar(255) UNIQUE NOT NULL, 
-            password varchar(255) NOT NULL,
-            name varchar(255) NOT NULL
-    ); 
-    `);
-=======
       id SERIAL PRIMARY KEY,
       username VARCHAR(255) UNIQUE NOT NULL,
       password VARCHAR(255) NOT NULL
@@ -60,7 +49,6 @@ async function activities() {
       );
     `)
     console.log("Finished building activities tables...")
->>>>>>> 64d1e7e87ecad4e90b9b6fa9aff429aa8f0f917f
 
     await client.query(`
     CREATE TABLE posts (
