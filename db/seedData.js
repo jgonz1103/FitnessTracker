@@ -1,5 +1,13 @@
 // require in the database adapter functions as you write them (createUser, createActivity...)
+<<<<<<< HEAD
 const { createUser, createActivity, createRoutine, getUserById, getActivityById, getRoutineActivityById, getUserByUsername, getActivityByName} = require('./index');
+=======
+const {
+  client, createUser, createActivity, createInitialUsers, createInitialActivities, 
+  createInitialRoutines, createInitialRoutineActivities
+} = require('./seed');
+
+>>>>>>> 64d1e7e87ecad4e90b9b6fa9aff429aa8f0f917f
 const client = require("./client")
 
 async function dropTables() {
@@ -21,12 +29,38 @@ async function createTables() {
 
     await client.query(`
     CREATE TABLE users (
+<<<<<<< HEAD
       id SERIAL PRIMARY KEY, 
             username varchar(255) UNIQUE NOT NULL, 
             password varchar(255) NOT NULL,
             name varchar(255) NOT NULL
     ); 
     `);
+=======
+      id SERIAL PRIMARY KEY,
+      username VARCHAR(255) UNIQUE NOT NULL,
+      password VARCHAR(255) NOT NULL
+    ); 
+    `)
+      console.log("Finished building tables...")
+
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function activities() {
+  try {
+    console.log("Starting to build activities tables...")
+    await client.query(`
+      CREATE TABLE activities (
+        id SERIAL PRIMARY KEY
+        name VARCHAR(255) UNIQUE KEY
+        description TEXT NOT NULL
+      );
+    `)
+    console.log("Finished building activities tables...")
+>>>>>>> 64d1e7e87ecad4e90b9b6fa9aff429aa8f0f917f
 
     await client.query(`
     CREATE TABLE posts (
@@ -59,6 +93,32 @@ async function createTables() {
     throw error;
 }
 }
+
+async function routines() {
+  try {
+    console.log("Starting to build routine tables...")
+    await client.query(`
+      CRREATE TABLE routines (
+        id SERIAL PRIMARY KEY
+        "creatorId" INTEGER REFERENCES users(id)
+        "IsPublic" BOOLEAN 	DEFAULT false
+        name VARCHAR(255) UNIQUE NOT NULL
+        goal TEXT NOT NULL
+      );
+      `)
+
+  } catch(error) {
+    throw error;
+  }
+ }
+
+
+
+
+
+
+
+
 
 /* 
 
@@ -233,6 +293,11 @@ async function rebuildDB() {
     await createInitialActivities()
     await createInitialRoutines()
     await createInitialRoutineActivities()
+
+    await activities()
+    await routines()
+
+
   } catch (error) {
     console.log("Error during rebuildDB")
     throw error
