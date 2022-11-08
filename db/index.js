@@ -55,7 +55,7 @@ async function getALLUsers() {
   return rows;
 }
 
-async function createActivity()
+
 
 
 module.exports = {
