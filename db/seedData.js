@@ -60,21 +60,6 @@ async function activities() {
     );
     `);
 
-    await client.query(`
-        CREATE TABLE tags (
-            id SERIAL PRIMARY KEY,
-            name VARCHAR(255) UNIQUE NOT NULL
-        );
-    `);
-
-    await client.query(`
-        CREATE TABLE post_tags (
-            "postId" INTEGER REFERENCES posts(id), 
-            "tagId" INTEGER REFERENCES tags(id),
-            UNIQUE ("postId", "tagId")
-        );
-    `);
-
     console.log("Finished building tables!")
 }catch (error) {
     console.log("Error building tables!")
@@ -86,7 +71,7 @@ async function routines() {
   try {
     console.log("Starting to build routine tables...")
     await client.query(`
-      CRREATE TABLE routines (
+      CREATE TABLE routines (
         id SERIAL PRIMARY KEY
         "creatorId" INTEGER REFERENCES users(id)
         "IsPublic" BOOLEAN 	DEFAULT false
