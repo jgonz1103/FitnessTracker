@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 const client = require("./client");
 const { addActivityToRoutine } = require("./routine_activities");
 
@@ -8,8 +9,8 @@ async function getAllActivities() {
     SELECT id
     FROM activities
     `);
-    const posts = await Promise.all(activityId.map(
-        post=> getActivityById (post.id)
+    const activities = await Promise.all(activityId.map(
+        activity=> getActivityById (activity.id)
     ));
     return activities;
 } catch (error) {
@@ -22,8 +23,7 @@ async function getActivityById(id) {
     const { rows: activityIds } = await client.query(`
     SELECT id
     FROM activities
-    WHERE "authorId"=${userId};
-  `);
+  `,[id]);
   const activities = await Promise.all(activityIds.map(
     activity => getActivityById(activity.id)
   ));
@@ -54,10 +54,10 @@ async function getActivityByName(name) {
 // select and return an array of all activities
 async function attachActivitiesToRoutines(routines) {
   try {
-    const createActivityRoutinePromises = routineActivies.map((routines) => {
-        return createActivitiesRoutines(activityId, routine.id);
+    await Promise.all(createActivityRoutinePromises);  
+    const createActivityRoutinePromises = routines.map((routineActivities) => {
     });
-    await Promise.all(createActivityRoutinePromises);
+    return createActivityRoutinePromises(activityId, routine.id);
 } catch (error) {
     throw error;
 }
@@ -76,8 +76,8 @@ async function createActivity({ name, description }) {
     `,
         [activityId, name, description]
     );
-    const routineActivities = await createActivities(routines);
-    return await addActivityToRoutine(activities.id, routineActivies);
+    const routineActivities = await createActivity(routines);
+    return await addActivityToRoutine(activities.id, routineActivities);
 } catch (error) {
     throw error;
 }
@@ -106,7 +106,7 @@ try {
       Object.values(fields)
   );
 
-  return user;
+  return activity;
 } catch (error) {
   throw error;
 }

@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 const client = require('./client');
 
 async function getRoutineById(id){
@@ -6,7 +7,7 @@ async function getRoutineById(id){
     SELECT *
     FROM routines
     WHERE id=$1;
-    `, [routinesId]);
+    `, [id]);
 
     if (!routine){
         throw {
@@ -19,8 +20,8 @@ async function getRoutineById(id){
     SELECT routine.*
     FROM routines
     JOIN activities_routine ON routine.id=activities_routine."routinesId"
-    WHERE post_tags."postId"=$1
-    `, [postId])
+    WHERE routines."routineId"=$1
+    `, [id])
 
     activities.routine = routines;
 
@@ -31,6 +32,15 @@ async function getRoutineById(id){
 }
 
 async function getRoutinesWithoutActivities(){
+  try{
+    const {rows:[routines]} = await client.query(`
+      SELECT * FROM routines
+    `)
+    return {rows:[routines]}
+  }
+  catch(error){
+    throw error
+  }
 }
 
 async function getAllRoutines() {
